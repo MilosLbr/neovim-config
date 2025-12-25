@@ -37,6 +37,7 @@ return {
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
       'ray-x/lsp_signature.nvim',
+      { 'folke/lazydev.nvim', opts = {} },
     },
     config = function()
       -- See `:help cmp`
@@ -140,6 +141,16 @@ return {
             },
           },
         }),
+      })
+
+      -- default server capabilities
+      local cmp_nvim_lsp = require 'cmp_nvim_lsp'
+
+      -- used to enable autocompletion (assign to every lsp server config)
+      local capabilities = cmp_nvim_lsp.default_capabilities()
+
+      vim.lsp.config('*', {
+        capabilities = capabilities,
       })
     end,
   },

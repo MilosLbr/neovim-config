@@ -101,13 +101,13 @@ return { -- Fuzzy Finder (files, lsp, etc)
           n = {
             ['<Tab>'] = focus_preview,
             ['<C-q>'] = trouble.open,
-            ['<A-q>'] = trouble.open,
+            ['<A-q>'] = trouble.add,
             ['CR'] = actions.select_default + actions.center,
           },
           i = {
             ['<Tab>'] = focus_preview,
             ['<C-q>'] = trouble.open,
-            ['<A-q>'] = trouble.open,
+            ['<A-q>'] = trouble.add,
           },
         },
       },

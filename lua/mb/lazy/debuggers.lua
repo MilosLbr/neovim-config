@@ -4,7 +4,14 @@ return {
     'rcarriga/nvim-dap-ui',
     'nvim-neotest/nvim-nio',
     'williamboman/mason.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
+    {
+      'jay-babu/mason-nvim-dap.nvim',
+      dependencies = { 'williamboman/mason.nvim' },
+      opts = {
+        ensure_installed = { "debugpy" },
+        automatic_installation = true,
+      },
+    }, 
     'mfussenegger/nvim-dap-python',
     'theHamsta/nvim-dap-virtual-text',
   },
