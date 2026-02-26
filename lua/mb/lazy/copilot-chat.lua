@@ -6,8 +6,13 @@ return {
     },
     opts = {
       window = {
-        layout = 'vertical',
         width = 0.4,
+      },
+
+      headers = {
+        user = '👤 You',
+        assistant = '🤖 Copilot',
+        tool = '🔧 Tool',
       },
     },
   },

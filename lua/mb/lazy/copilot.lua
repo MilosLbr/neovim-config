@@ -4,16 +4,13 @@ return {
     require('copilot').setup {
       panel = {
         auto_refresh = true,
-        layout = {
-          position = 'right',
-        },
       },
       suggestion = {
         auto_trigger = true,
         keymap = {
-          accept = '<M-l>',
+          accept = '<M-k>',
           accept_word = '<M-w>',
-          accept_line = '<M-k>',
+          accept_line = '<M-l>',
         },
       },
     }
