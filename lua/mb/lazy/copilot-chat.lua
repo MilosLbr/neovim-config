@@ -5,10 +5,10 @@ return {
       { 'nvim-lua/plenary.nvim', branch = 'master' },
     },
     opts = {
+      model = 'claude-opus-4.6',
       window = {
         width = 0.4,
       },
-
       headers = {
         user = '👤 You',
         assistant = '🤖 Copilot',
