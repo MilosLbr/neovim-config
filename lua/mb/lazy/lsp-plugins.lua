@@ -28,7 +28,10 @@ return {
           },
         },
       },
-      'neovim/nvim-lspconfig',
+      {
+        'neovim/nvim-lspconfig',
+        dependencies = { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
+      },
     },
   },
   {
