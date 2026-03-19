@@ -37,7 +37,6 @@ return {
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
       'ray-x/lsp_signature.nvim',
-      { 'folke/lazydev.nvim', opts = {} },
     },
     config = function()
       -- See `:help cmp`
@@ -130,7 +129,9 @@ return {
 
       -- `:` cmdline setup.
       cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
+        mapping = cmp.mapping.preset.cmdline {
+          ['<Tab>'] = { c = cmp.mapping.confirm { select = true } },
+        },
         sources = cmp.config.sources({
           { name = 'path' },
         }, {

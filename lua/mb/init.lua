@@ -1,6 +1,6 @@
 require 'mb.globals'
-require 'mb.remap'
 require 'mb.options'
 require 'mb.autocomands'
 require 'mb.lazy_init'
 require 'mb.lsp'
+require 'mb.remap'

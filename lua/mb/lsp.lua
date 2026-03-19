@@ -49,7 +49,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     -- Opens a popup that displays documentation about the word under your cursor
     --  See `:help K` for why this keymap.
-    map('K', vim.lsp.buf.hover, 'Hover Documentation')
+    map('K', function()
+      vim.lsp.buf.hover { border = 'rounded' }
+    end, 'Hover Documentation')
 
     -- WARN: This is not Goto Definition, this is Goto Declaration.
     --  For example, in C this would take you to the header.
@@ -101,4 +103,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.diagnostic.config {
   underline = true,
   virtual_text = false,
+  float = { border = 'rounded' },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.HINT] = ' ',
+      [vim.diagnostic.severity.INFO] = ' ',
+      [vim.diagnostic.severity.WARN] = ' ',
+      [vim.diagnostic.severity.ERROR] = ' ',
+    },
+  },
 }

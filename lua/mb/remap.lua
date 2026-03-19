@@ -8,20 +8,18 @@ vim.opt.hlsearch = true
 keymap('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-keymap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-keymap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-keymap(
-  'n',
-  ']e',
-  ':lua vim.diagnostic.goto_next ({ severity = vim.diagnostic.severity.ERROR }) <CR>',
-  { desc = 'Go to next [D]iagnostic message' }
-)
-keymap(
-  'n',
-  '[e',
-  ':lua vim.diagnostic.goto_prev ({ severity = vim.diagnostic.severity.ERROR }) <CR>',
-  { desc = 'Go to previous [D]iagnostic message' }
-)
+keymap('n', '[d', function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = 'Go to previous [D]iagnostic message' })
+keymap('n', ']d', function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = 'Go to next [D]iagnostic message' })
+keymap('n', ']e', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR, float = true }
+end, { desc = 'Go to next [E]rror message' })
+keymap('n', '[e', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR, float = true }
+end, { desc = 'Go to previous [E]rror message' })
 keymap('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 keymap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -64,8 +62,6 @@ keymap('n', '<S-h>', ':bprevious<CR>zz')
 keymap('n', '<A-0>', '<C-^>zz')
 
 -- Center the view when navigating
-keymap('n', '<C-d>', '<C-d>zz')
-keymap('n', '<C-u>', '<C-u>zz')
 keymap('n', 'G', 'Gzz')
 keymap('n', '<C-o>', '<C-o>zz')
 keymap('n', '<C-i>', '<C-i>zz')
@@ -108,3 +104,24 @@ keymap('x', 'K', ":m '<-2<CR>gv=gv")
 keymap('x', 'J', ":m '>+1<CR>gv=gv")
 keymap('x', '<A-j>', ":m '>+1<CR>gv=gv")
 keymap('x', '<A-k>', ":m '<-2<CR>gv=gv")
+
+local neoscroll = require 'neoscroll'
+local keymaps = {
+  ['<C-u>'] = function()
+    neoscroll.scroll(-12, {
+      duration = 100,
+      info = 'center-on-scroll',
+    })
+  end,
+  ['<C-d>'] = function()
+    neoscroll.scroll(12, {
+      duration = 100,
+      info = 'center-on-scroll',
+    })
+  end,
+}
+
+local modes = { 'n', 'v', 'x' }
+for key, func in pairs(keymaps) do
+  keymap(modes, key, func)
+end
