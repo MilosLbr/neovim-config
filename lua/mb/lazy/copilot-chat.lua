@@ -1,19 +1,19 @@
-return {
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = {
-      { 'nvim-lua/plenary.nvim', branch = 'master' },
-    },
-    opts = {
-      model = 'claude-opus-4.6',
-      window = {
-        width = 0.4,
-      },
-      headers = {
-        user = '👤 You',
-        assistant = '🤖 Copilot',
-        tool = '🔧 Tool',
-      },
-    },
-  },
-}
+-- return {
+--   {
+--     'CopilotC-Nvim/CopilotChat.nvim',
+--     dependencies = {
+--       { 'nvim-lua/plenary.nvim', branch = 'master' },
+--     },
+--     opts = {
+--       model = 'claude-opus-4.6',
+--       window = {
+--         width = 0.4,
+--       },
+--       headers = {
+--         user = '👤 You',
+--         assistant = '🤖 Copilot',
+--         tool = '🔧 Tool',
+--       },
+--     },
+--   },
+-- }
