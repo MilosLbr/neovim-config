@@ -36,6 +36,9 @@ return {
       chat = {
         show_header_separator = true,
         show_references = true,
+        window = {
+          width = 0.4,
+        },
       },
       diff = {
         provider = 'default',

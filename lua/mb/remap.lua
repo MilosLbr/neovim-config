@@ -125,3 +125,16 @@ local modes = { 'n', 'v', 'x' }
 for key, func in pairs(keymaps) do
   keymap(modes, key, func)
 end
+
+keymap(
+  { 'n', 'v' },
+  '<localleader>cc',
+  '<cmd>CodeCompanionChat Toggle<cr>',
+  { noremap = true, silent = true, desc = 'Toggle Code Companion Chat' }
+)
+keymap(
+  'v',
+  'ga',
+  '<cmd>CodeCompanionChat Add<cr>',
+  { noremap = true, silent = true, desc = 'Add selection to Code Companion Chat' }
+)
