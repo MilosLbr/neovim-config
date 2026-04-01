@@ -105,6 +105,7 @@ keymap('x', 'J', ":m '>+1<CR>gv=gv")
 keymap('x', '<A-j>', ":m '>+1<CR>gv=gv")
 keymap('x', '<A-k>', ":m '<-2<CR>gv=gv")
 
+-- Neoscroll
 local neoscroll = require 'neoscroll'
 local keymaps = {
   ['<C-u>'] = function()
@@ -126,6 +127,7 @@ for key, func in pairs(keymaps) do
   keymap(modes, key, func)
 end
 
+-- Code Companion Chat
 keymap(
   { 'n', 'v' },
   '<localleader>cc',
