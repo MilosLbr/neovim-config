@@ -1,6 +1,6 @@
 return {
   'olimorris/codecompanion.nvim',
-  version = '^19.0.0',
+  version = '19.7.0',
   dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',
@@ -13,8 +13,8 @@ return {
       group = group,
       callback = function(e)
         e.data.handle = require('fidget.progress').handle.create {
-          title = '🤖' .. ' CodeCompanion',
-          message = ' Thinking...',
+          title = ' Thinking...',
+          message = string.format('🤖 %s (%s)', e.data.adapter.formatted_name, e.data.adapter.model),
           lsp_client = { name = 'codecompanion' },
         }
       end,
