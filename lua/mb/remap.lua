@@ -131,6 +131,12 @@ end
 keymap(
   { 'n', 'v' },
   '<localleader>cc',
+  '<cmd>CodeCompanionChat<cr>',
+  { noremap = true, silent = true, desc = 'Open New Code Companion Chat' }
+)
+keymap(
+  { 'n', 'v' },
+  '<localleader>ct',
   '<cmd>CodeCompanionChat Toggle<cr>',
   { noremap = true, silent = true, desc = 'Toggle Code Companion Chat' }
 )

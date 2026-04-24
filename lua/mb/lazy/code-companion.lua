@@ -31,7 +31,36 @@ return {
       end,
     })
   end,
+
   opts = {
+    rules = {
+      project_specific_copilot_rules = {
+        description = 'Project specific rule files for github copilot ',
+        files = {
+          '.github/**/*.instructions.md',
+        },
+      },
+      project_specific_kilo_rules = {
+        description = 'Project specific rule files for kilo code',
+        files = {
+          '.kilo/rules/**/*.md',
+        },
+      },
+      opts = {
+        chat = {
+          autoload = function()
+            local cwd = vim.fn.getcwd()
+            local github_exists = vim.uv.fs_stat(cwd .. '/.github') ~= nil
+            local kilo_exists = vim.uv.fs_stat(cwd .. '/.kilo') ~= nil
+            if github_exists and kilo_exists then
+              return { 'default', 'project_specific_copilot_rules' } -- when both exist, prioritize copilot rules
+            else
+              return { 'default', 'project_specific_copilot_rules', 'project_specific_kilo_rules' }
+            end
+          end,
+        },
+      },
+    },
     display = {
       chat = {
         show_header_separator = true,
