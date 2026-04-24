@@ -33,6 +33,13 @@ return {
   end,
 
   opts = {
+    prompt_library = {
+      markdown = {
+        dirs = {
+          vim.fs.joinpath(vim.fn.getcwd(), '/.codecompanion'),
+        },
+      },
+    },
     rules = {
       project_specific_copilot_rules = {
         description = 'Project specific rule files for github copilot ',
