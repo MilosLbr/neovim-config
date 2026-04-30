@@ -1,9 +1,11 @@
 return {
   'olimorris/codecompanion.nvim',
-  version = '19.7.0',
+  version = '19.*',
   dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',
+    'MeanderingProgrammer/render-markdown.nvim',
+    'ravitemer/codecompanion-history.nvim',
   },
   init = function()
     local group = vim.api.nvim_create_augroup('CodeCompanionFidget', { clear = true })
@@ -82,7 +84,10 @@ return {
     },
     strategies = {
       chat = {
-        adapter = 'copilot',
+        adapter = {
+          name = 'copilot',
+          model = 'gpt-5-mini',
+        },
         keymaps = {
           send = {
             modes = { n = '<CR>', i = '<C-s>' },
@@ -99,6 +104,16 @@ return {
       },
       cmd = {
         adapter = 'copilot',
+      },
+    },
+    extensions = {
+      history = {
+        enabled = true,
+        opts = {
+          summary = {
+            create_summary_keymap = 'gm',
+          },
+        },
       },
     },
   },
