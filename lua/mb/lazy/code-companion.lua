@@ -82,7 +82,7 @@ return {
         provider = 'default',
       },
     },
-    strategies = {
+    interactions = {
       chat = {
         adapter = {
           name = 'copilot',
@@ -96,6 +96,65 @@ return {
               vim.cmd 'stopinsert'
             end,
             description = 'Send and return to normal mode',
+          },
+        },
+        tools = {
+          ['read_file'] = {
+            opts = {
+              require_approval_before = false,
+            },
+          },
+          ['file_search'] = {
+            opts = {
+              require_approval_before = false,
+            },
+          },
+          ['get_changed_files'] = {
+            opts = {
+              require_approval_before = false,
+            },
+          },
+          ['get_diagnostics'] = {
+            opts = {
+              require_approval_before = false,
+            },
+          },
+          ['grep_search'] = {
+            opts = {
+              require_approval_before = false,
+            },
+          },
+          ['run_command'] = {
+            opts = {
+              require_approval_before = function(tool, _tools)
+                local cmd = tool.args.cmd
+                local auto_approved = {
+                  'rg ',
+                  'dir',
+                  'cat ',
+                  'type ',
+                  'ls ',
+                  'find ',
+                  'findstr ',
+                  'git status',
+                  'git log',
+                  'git diff',
+                  'git show',
+                  'git branch',
+                  'echo ',
+                  'which ',
+                  'where ',
+                  'Get-ChildItem ',
+                  'Get-Content ',
+                }
+                for _, prefix in ipairs(auto_approved) do
+                  if vim.startswith(cmd, prefix) then
+                    return false
+                  end
+                end
+                return true
+              end,
+            },
           },
         },
       },
