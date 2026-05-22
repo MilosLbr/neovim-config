@@ -86,7 +86,7 @@ return {
       chat = {
         adapter = {
           name = 'copilot',
-          model = 'gpt-5-mini',
+          model = 'claude-sonnet-4.6',
         },
         keymaps = {
           send = {
