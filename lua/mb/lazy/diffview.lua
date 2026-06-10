@@ -3,6 +3,12 @@ return {
   config = function()
     require('diffview').setup {
       enhanced_diff_hl = true,
+      hooks = {
+        diff_buf_win_enter = function()
+          -- Expand all diff folds every time a diff buffer is shown in a window
+          vim.opt_local.foldlevel = 99
+        end,
+      },
     }
 
     local function set_diff_hl()
