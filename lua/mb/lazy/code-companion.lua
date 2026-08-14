@@ -8,15 +8,22 @@ return {
     'ravitemer/codecompanion-history.nvim',
   },
   init = function()
+    vim.g.codecompanion_log_level = 'TRACE'
     local group = vim.api.nvim_create_augroup('CodeCompanionFidget', { clear = true })
 
     vim.api.nvim_create_autocmd('User', {
       pattern = 'CodeCompanionRequestStarted',
       group = group,
       callback = function(e)
+        local adapter = e.data.adapter
+        local model = adapter.model
+        local message = string.format('🤖 %s', adapter.formatted_name)
+        if model then
+          message = string.format('%s (%s)', message, model)
+        end
         e.data.handle = require('fidget.progress').handle.create {
           title = ' Thinking...',
-          message = string.format('🤖 %s (%s)', e.data.adapter.formatted_name, e.data.adapter.model),
+          message = message,
           lsp_client = { name = 'codecompanion' },
         }
       end,
@@ -32,9 +39,35 @@ return {
         end
       end,
     })
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'CodeCompanionChatModel',
+      group = group,
+      callback = function(e)
+        if not e.data.model then
+          return
+        end
+        local chat = require('codecompanion').buf_get_chat(e.data.bufnr)
+        if chat then
+          chat.adapter.active_model = e.data.model
+        end
+      end,
+    })
   end,
 
   opts = {
+    adapters = {
+      acp = {
+        extend = {
+          opencode = {
+            defaults = {
+              model = 'github-copilot/claude-sonnet-4.6',
+              mcpServers = 'inherit_from_config',
+            },
+          },
+        },
+      },
+    },
     prompt_library = {
       markdown = {
         dirs = {
@@ -49,22 +82,13 @@ return {
           '.github/**/*.instructions.md',
         },
       },
-      project_specific_kilo_rules = {
-        description = 'Project specific rule files for kilo code',
-        files = {
-          '.kilo/rules/**/*.md',
-        },
-      },
       opts = {
         chat = {
           autoload = function()
             local cwd = vim.fn.getcwd()
             local github_exists = vim.uv.fs_stat(cwd .. '/.github') ~= nil
-            local kilo_exists = vim.uv.fs_stat(cwd .. '/.kilo') ~= nil
-            if github_exists and kilo_exists then
-              return { 'default', 'project_specific_copilot_rules' } -- when both exist, prioritize copilot rules
-            else
-              return { 'default', 'project_specific_copilot_rules', 'project_specific_kilo_rules' }
+            if github_exists then
+              return { 'default', 'project_specific_copilot_rules' }
             end
           end,
         },
@@ -87,6 +111,15 @@ return {
         adapter = {
           name = 'copilot',
           model = 'claude-sonnet-4.6',
+        },
+        roles = {
+          llm = function(adapter)
+            local details = adapter.formatted_name
+            if adapter.active_model then
+              details = string.format('%s, %s', details, adapter.active_model)
+            end
+            return string.format('CodeCompanion (%s)', details)
+          end,
         },
         keymaps = {
           send = {
@@ -169,6 +202,10 @@ return {
       history = {
         enabled = true,
         opts = {
+          title_generation_opts = {
+            adapter = 'copilot',
+            model = 'claude-haiku-4.5',
+          },
           summary = {
             create_summary_keymap = 'gm',
           },
