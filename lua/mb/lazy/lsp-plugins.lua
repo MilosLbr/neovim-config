@@ -1,11 +1,38 @@
 return {
+  -- Mason: portable package manager for LSP servers, formatters, linters, and DAP adapters.
+  -- Installs and manages external tooling in a consistent way across platforms,
+  -- independent of system package managers.
+  {
+    'williamboman/mason.nvim',
+    opts = {
+      ui = {
+        icons = {
+          package_installed = '✓',
+          package_pending = '➜',
+          package_uninstalled = '✗',
+        },
+      },
+      registries = {
+        'github:Crashdummyy/mason-registry',
+        'github:mason-org/mason-registry',
+      },
+    },
+  },
+
+  -- Mason-lspconfig: bridges mason + lspconfig
   {
     'williamboman/mason-lspconfig.nvim',
+    dependencies = {
+      'williamboman/mason.nvim',
+      {
+        'neovim/nvim-lspconfig',
+        dependencies = { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
+      },
+    },
     opts = {
-      -- list of servers for mason to install
       ensure_installed = {
         'angularls',
-        'csharp_ls',
+        -- 'csharp_ls',
         'css_variables',
         'cssls',
         'cssmodules_ls',
@@ -15,38 +42,29 @@ return {
         'ts_ls',
       },
     },
-    dependencies = {
-      {
-        'williamboman/mason.nvim',
-        opts = {
-          ui = {
-            icons = {
-              package_installed = '✓',
-              package_pending = '➜',
-              package_uninstalled = '✗',
-            },
-          },
-        },
-      },
-      {
-        'neovim/nvim-lspconfig',
-        dependencies = { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
+  },
+
+  -- Mason-tool-installer: auto-install formatters, linters, etc.
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    dependencies = { 'williamboman/mason.nvim' },
+    opts = {
+      ensure_installed = {
+        'prettierd',
+        'stylua',
+        'black',
+        'pylint',
+        'eslint_d',
+        'roslyn',
       },
     },
   },
+
+  -- Roslyn: C# language server (needs its own plugin to start)
   {
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-    opts = {
-      ensure_installed = {
-        'prettierd', -- prettier formatter
-        'stylua', -- lua formatter
-        'black', -- python formatter
-        'pylint',
-        'eslint_d',
-      },
-    },
-    dependencies = {
-      'williamboman/mason.nvim',
-    },
+    'seblyng/roslyn.nvim',
+    ft = 'cs',
+    dependencies = { 'williamboman/mason.nvim' },
+    opts = {},
   },
 }
