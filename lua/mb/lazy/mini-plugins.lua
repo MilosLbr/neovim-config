@@ -1,7 +1,8 @@
 -- Collection of various small independent plugins/modules
 return {
   'echasnovski/mini.nvim',
-  dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  branch = 'main',
+  dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
   config = function()
     local spec_treesitter = require('mini.ai').gen_spec.treesitter
     -- Better Around/Inside textobjects
