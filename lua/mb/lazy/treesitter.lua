@@ -62,7 +62,6 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
-    branch = 'master',
     config = function()
       local tsContext = require 'treesitter-context'
 
