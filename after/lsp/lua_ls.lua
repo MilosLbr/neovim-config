@@ -2,6 +2,7 @@ return {
   -- cmd = {...},
   -- filetypes = { ...},
   -- capabilities = {},
+  root_markers = { '.git', '.luarc.json', '.luarc.jsonc' },
   settings = {
     Lua = {
       completion = {

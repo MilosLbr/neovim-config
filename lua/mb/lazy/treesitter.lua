@@ -1,7 +1,6 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'main',
     lazy = false,
     build = ':TSUpdate',
     config = function()
@@ -63,7 +62,6 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
-    branch = 'main',
     config = function()
       local tsContext = require 'treesitter-context'
 
