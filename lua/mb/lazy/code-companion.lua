@@ -90,6 +90,7 @@ return {
             if github_exists then
               return { 'default', 'project_specific_copilot_rules' }
             end
+            return { 'default' }
           end,
         },
       },
