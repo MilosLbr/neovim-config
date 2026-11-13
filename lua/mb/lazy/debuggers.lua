@@ -144,9 +144,10 @@ return {
 
     dap.adapters.coreclr = {
       type = 'executable',
-      command = vim.fn.stdpath 'data'
-        .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg'
-        .. (vim.fn.has 'win32' == 1 and '.exe' or ''),
+      -- Mason's bin shim is a .cmd on Windows, which can't be spawned directly
+      command = vim.fn.has 'win32' == 1
+          and vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe'
+        or vim.fn.stdpath 'data' .. '/mason/bin/netcoredbg',
       args = { '--interpreter=vscode' },
     }
 
