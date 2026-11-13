@@ -104,7 +104,11 @@ return {
       local debug_dir = base .. '/bin/Debug/'
       local tfm_dirs = vim.fn.glob(debug_dir .. 'net*/', false, true)
       if #tfm_dirs > 0 then
-        table.sort(tfm_dirs)
+        table.sort(tfm_dirs, function(a, b)
+          local va = tonumber(a:match 'net(%d+)') or 0
+          local vb = tonumber(b:match 'net(%d+)') or 0
+          return va < vb
+        end)
         return (tfm_dirs[#tfm_dirs]:gsub('\\', '/'))
       end
       return debug_dir
@@ -140,7 +144,9 @@ return {
 
     dap.adapters.coreclr = {
       type = 'executable',
-      command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe',
+      command = vim.fn.stdpath 'data'
+        .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg'
+        .. (vim.fn.has 'win32' == 1 and '.exe' or ''),
       args = { '--interpreter=vscode' },
     }
 

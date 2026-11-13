@@ -27,8 +27,10 @@ return {
         end,
       })
 
-      -- On Windows the terminal's raw output is ConPTY redraw sequences, so
-      -- scan the rendered terminal buffer for the testhost PID instead.
+      -- Scan the rendered terminal buffer rather than raw job output: on Windows
+      -- the raw output is ConPTY redraw sequences. Lines are joined because a
+      -- narrow terminal hard-wraps, which could split the PID; the trailing ','
+      -- ensures the full number has been printed.
       local deadline = vim.uv.now() + 120000
       timer:start(200, 200, vim.schedule_wrap(function()
         if timer:is_closing() then
@@ -37,19 +39,17 @@ return {
         if not vim.api.nvim_buf_is_valid(buf) or vim.uv.now() > deadline then
           return stop()
         end
-        for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
-          local pid = line:match 'Process Id:%s*(%d+)'
-          if pid then
-            stop()
-            vim.notify('Found testhost PID ' .. pid .. ', attaching debugger...', vim.log.levels.INFO)
-            dap.run {
-              type = 'coreclr',
-              name = 'Attach to test host ' .. pid,
-              request = 'attach',
-              processId = tonumber(pid),
-            }
-            return
-          end
+        local text = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '')
+        local pid = text:match 'Process Id:%s*(%d+),'
+        if pid then
+          stop()
+          vim.notify('Found testhost PID ' .. pid .. ', attaching debugger...', vim.log.levels.INFO)
+          dap.run {
+            type = 'coreclr',
+            name = 'Attach to test host ' .. pid,
+            request = 'attach',
+            processId = tonumber(pid),
+          }
         end
       end))
     end
