@@ -10,36 +10,48 @@ return {
       vim.cmd 'resize 10'
 
       local dap = require 'dap'
-      local attached = false
-      local partial = ''
+      local buf = vim.api.nvim_get_current_buf()
+      local timer = assert(vim.uv.new_timer())
+      local function stop()
+        if not timer:is_closing() then
+          timer:stop()
+          timer:close()
+        end
+      end
 
       vim.fn.jobstart(cmd, {
         term = true,
         env = { VSTEST_HOST_DEBUG = '1' },
-        on_stdout = function(_, data, _)
-          if attached or not data then
-            return
-          end
-          -- chunks can split a line; carry the unfinished tail over to the next call
-          data[1] = partial .. data[1]
-          partial = table.remove(data)
-          for _, line in ipairs(data) do
-            local pid = line:match 'Process Id:%s*(%d+)'
-            if pid then
-              attached = true
-              vim.schedule(function()
-                vim.notify('Found testhost PID ' .. pid .. ', attaching debugger (press F5 to skip the initial break)...', vim.log.levels.INFO)
-                dap.run {
-                  type = 'coreclr',
-                  request = 'attach',
-                  processId = tonumber(pid),
-                }
-              end)
-              break
-            end
-          end
+        on_exit = function()
+          vim.schedule(stop)
         end,
       })
+
+      -- On Windows the terminal's raw output is ConPTY redraw sequences, so
+      -- scan the rendered terminal buffer for the testhost PID instead.
+      local deadline = vim.uv.now() + 120000
+      timer:start(200, 200, vim.schedule_wrap(function()
+        if timer:is_closing() then
+          return
+        end
+        if not vim.api.nvim_buf_is_valid(buf) or vim.uv.now() > deadline then
+          return stop()
+        end
+        for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+          local pid = line:match 'Process Id:%s*(%d+)'
+          if pid then
+            stop()
+            vim.notify('Found testhost PID ' .. pid .. ', attaching debugger...', vim.log.levels.INFO)
+            dap.run {
+              type = 'coreclr',
+              name = 'Attach to test host ' .. pid,
+              request = 'attach',
+              processId = tonumber(pid),
+            }
+            return
+          end
+        end
+      end))
     end
 
     vim.g['test#custom_strategies'] = { debug = debug_test_strategy }
