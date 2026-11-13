@@ -100,11 +100,24 @@ return {
 
     local function get_dll_dir()
       local target = get_build_target()
-      if target ~= '' and target:match '%.csproj$' then
-        return vim.fs.dirname(target) .. '/bin/Debug/'
+      local base = (target ~= '' and target:match '%.csproj$') and vim.fs.dirname(target) or vim.fn.getcwd()
+      local debug_dir = base .. '/bin/Debug/'
+      local tfm_dirs = vim.fn.glob(debug_dir .. 'net*/', false, true)
+      if #tfm_dirs > 0 then
+        table.sort(tfm_dirs)
+        return (tfm_dirs[#tfm_dirs]:gsub('\\', '/'))
       end
-      return vim.fn.getcwd() .. '/bin/Debug/'
+      return debug_dir
     end
+
+    local no_build_config = {
+      type = 'coreclr',
+      name = 'Launch App (no build)',
+      request = 'launch',
+      program = function()
+        return vim.fn.input('Path to dll: ', get_dll_dir(), 'file')
+      end,
+    }
 
     vim.keymap.set('n', '<leader>dd', function()
       local target = get_build_target()
@@ -116,7 +129,7 @@ return {
           if return_code == 0 then
             vim.notify('Build OK (' .. target_name .. '), starting debugger...', vim.log.levels.INFO)
             vim.schedule(function()
-              dap.continue()
+              dap.run(no_build_config)
             end)
           else
             vim.notify('Build failed with exit code ' .. return_code, vim.log.levels.ERROR)
@@ -127,14 +140,14 @@ return {
 
     dap.adapters.coreclr = {
       type = 'executable',
-      command = 'netcoredbg',
+      command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe',
       args = { '--interpreter=vscode' },
     }
 
     dap.adapters.remote_coreclr = {
       type = 'server',
       host = '127.0.0.1',
-      port = '4711',
+      port = 4711,
     }
 
     dap.configurations.cs = {
@@ -148,19 +161,12 @@ return {
           vim.cmd(cmd)
           if vim.v.shell_error ~= 0 then
             vim.notify('Build failed', vim.log.levels.ERROR)
-            return nil
+            return dap.ABORT
           end
           return vim.fn.input('Path to dll: ', get_dll_dir(), 'file')
         end,
       },
-      {
-        type = 'coreclr',
-        name = 'Launch App (no build)',
-        request = 'launch',
-        program = function()
-          return vim.fn.input('Path to dll: ', get_dll_dir(), 'file')
-        end,
-      },
+      no_build_config,
       {
         type = 'coreclr',
         name = 'Attach to process',

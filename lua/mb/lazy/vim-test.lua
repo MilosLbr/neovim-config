@@ -11,6 +11,7 @@ return {
 
       local dap = require 'dap'
       local attached = false
+      local partial = ''
 
       vim.fn.jobstart(cmd, {
         term = true,
@@ -19,12 +20,15 @@ return {
           if attached or not data then
             return
           end
+          -- chunks can split a line; carry the unfinished tail over to the next call
+          data[1] = partial .. data[1]
+          partial = table.remove(data)
           for _, line in ipairs(data) do
             local pid = line:match 'Process Id:%s*(%d+)'
             if pid then
               attached = true
               vim.schedule(function()
-                vim.notify('Found testhost PID ' .. pid .. ', attaching debugger...', vim.log.levels.INFO)
+                vim.notify('Found testhost PID ' .. pid .. ', attaching debugger (press F5 to skip the initial break)...', vim.log.levels.INFO)
                 dap.run {
                   type = 'coreclr',
                   request = 'attach',
@@ -58,9 +62,7 @@ return {
 
     keymap.set('n', '<leader>tD', function()
       vim.cmd 'wa'
-      vim.g['test#strategy'] = 'debug'
-      vim.cmd 'TestNearest'
-      vim.g['test#strategy'] = 'neovim'
+      vim.cmd 'TestNearest -strategy=debug'
     end, { desc = 'Debug the nearest test' })
   end,
 }
